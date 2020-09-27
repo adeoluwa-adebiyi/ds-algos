@@ -1,7 +1,7 @@
 // Beware! Common JS style classes just for the fun of it....
 // Remember when object oriented javascript was a complete nightmare!!
 
-function Node(val) {
+  function Node(val) {
     this.id = null;
     this.left = null;
     this.right = null;
@@ -56,7 +56,8 @@ function Node(val) {
     this.deleteRecursive(val, this.root, this.root);
   };
   
-  BinaryTree.prototype.insertRecursive = function (val, root, parent) {
+  BinaryTree.prototype.insertRecursive = function (val, root) {
+
     // if tree is empty, initialize root
     if (!root) {
       root = new Node(val);
@@ -119,12 +120,10 @@ function Node(val) {
                 // Walk left subtree of node to get smallest node
                 let temp = this.largestTreeNode(root.left);
                 // Resign smallest tree right node
-                temp.parent.left = temp.right;
-
-                temp.left = parent.left.left;
-                temp.right = parent.left.right;
-                parent.left = temp;
-                temp.parent = parent;
+                temp.parent.right = temp.right;
+                temp.left = root.left;
+                temp.right = root.right;
+                this.root.parent = this.root = temp;
               }
 
         }
@@ -160,7 +159,7 @@ function Node(val) {
           // Walk left subtree of node to get smallest node
           let temp = this.largestTreeNode(root.left);
           // Resign smallest tree right node
-          temp.parent.left = temp.right;
+          temp.parent.right = temp.right;
   
           temp.left = parent.left.left;
           temp.right = parent.left.right;
@@ -201,8 +200,7 @@ function Node(val) {
           // Walk left subtree of node to get smallest node
           let temp = this.largestTreeNode(root.left);
           // Resign smallest tree right node
-          temp.parent.left = temp.right;
-  
+          temp.parent.right = temp.right;
           temp.left = parent.right.left;
           temp.right = parent.right.right;
           parent.right = temp;
@@ -214,7 +212,7 @@ function Node(val) {
   };
   
   BinaryTree.prototype.delete = function (val) {
-    this.deleteRecursive(val, this.root, this.root.parent);
+    this.deleteRecursive(val, this.root);
   };
   
   BinaryTree.prototype.largestTreeNode = function (node) {
@@ -230,27 +228,56 @@ function Node(val) {
       this.inOrder(node.right);
   }
 
+  BinaryTree.prototype.preOrder = function(node){
+    if(!node)
+      return;
+
+    console.log(node.data);
+    this.preOrder(node.left);
+    this.preOrder(node.right);
+  }
+
+  BinaryTree.prototype.postOrder = function(node){
+    if(!node)
+      return;
+
+    this.postOrder(node.left);
+    this.postOrder(node.right);
+    console.log(node.data);
+  }
+
+  BinaryTree.prototype.rightRotate = function(node){
+
+    let temp = node.parent;
+    node.right = temp;
+    node.parent = temp.parent;
+    temp.parent = node;
+
+    if(node.parent === this.root){
+      console.log("YES");
+      node.parent = node;
+      tree.root = node;
+    }
+
+    return node;
+
+  }
+
   function literal(obj){
-      console.log(obj.id)
     return obj;
   }
   
   let tree = new BinaryTree();
+  // tree.insert(40);
+  // tree.insert(45);
+  // tree.insert(31);
+  // tree.insert(90);
+  // tree.insert(40);
+  // tree.insert(34);
+  // tree.insert(99);
+  // tree.insert(12);
   tree.insert(40);
-  tree.insert(45);
-  tree.insert(31);
-  tree.insert(90);
-  tree.insert(40);
-  tree.insert(34);
-  tree.insert(99);
+  tree.insert(39);
   tree.insert(12);
-  
-  
-  
-  // console.log(tree.root);
-  
-  // tree.inOrder(tree.root);
-//   console.log(tree.root.left);
-  tree.delete(40);
   tree.inOrder(tree.root);
 //   console.log(tree.root.parent);
