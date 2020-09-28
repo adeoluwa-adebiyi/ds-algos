@@ -246,17 +246,95 @@
     console.log(node.data);
   }
 
-  BinaryTree.prototype.rightRotate = function(node){
-
+  BinaryTree.prototype.rightRotate = function(ancestor){
+    let node = ancestor.left;
     let temp = node.parent;
+    temp.left = node.right;
     node.right = temp;
-    node.parent = temp.parent;
+    node.parent = node;
     temp.parent = node;
 
     if(node.parent === this.root){
       console.log("YES");
       node.parent = node;
       tree.root = node;
+    }
+
+    return node;
+
+  }
+
+  BinaryTree.prototype.leftRotate = function(ancestor){
+    let node = ancestor.right;
+    let temp = node.parent;
+    temp.right = node.left;
+    node.left = temp;
+    temp.parent = node;
+    node.parent = node;
+
+    if(this.root === node.parent){
+      node.parent = node;
+      tree.root = node;
+    }
+
+    return node;
+
+  }
+
+  BinaryTree.prototype.rightLeftRotate = function(ancestor){
+    
+  }
+
+  BinaryTree.prototype.leftRightRotate = function(ancestor){
+
+  }
+
+  BinaryTree.prototype.height = function(node){
+
+  }
+
+  BinaryTree.prototype.balance = function(node){
+
+    if(node.parent && node.parent.parent){
+
+      let ancestor = node.parent.parent;
+
+      const balance_factor = this.height(ancestor.left) - this.height(ancestor.right);
+
+      if(balance_factor === -1 || balance_factor ===0 || balance_factor ===1){
+
+        if(this.root === node)
+          return node;
+
+        return this.balance(ancestor);
+      }else{
+        
+        //LL-Case
+        if(node === ancestor.left.left){
+          node.parent.parent = this.rightRotate(ancestor);
+          return this.balance(ancestor);
+        }
+
+        //LR-Case
+        if(node === ancestor.left.right){
+
+          return this.balance(ancestor);
+        }
+
+        //RR-Case
+        if(node === ancestor.right.right){
+          node.parent.parent = this.leftRotate(ancestor);
+          return this.balance(ancestor);
+        }
+
+        //RL-Case
+        if(node === ancestor.right.left){
+
+          return this.balance(ancestor);
+        }
+
+      }
+
     }
 
     return node;
@@ -276,8 +354,11 @@
   // tree.insert(34);
   // tree.insert(99);
   // tree.insert(12);
+  tree.insert(30);
   tree.insert(40);
-  tree.insert(39);
-  tree.insert(12);
+  tree.insert(50);
+  tree.insert(70);
+
+  tree.root = tree.leftRotate(tree.root.right);
+  console.log(tree.root);
   tree.inOrder(tree.root);
-//   console.log(tree.root.parent);
