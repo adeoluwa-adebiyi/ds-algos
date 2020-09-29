@@ -1,6 +1,10 @@
 // Beware! Common JS style classes just for the fun of it....
 // Remember when object oriented javascript was a complete nightmare!!
 
+function console_log(obj){
+  // console.log(obj);
+}
+
   function Node(val) {
     this.id = null;
     this.left = null;
@@ -20,7 +24,7 @@
 
       if(!this.root){
           this.root = new Node(val);
-          this.root.parent = this.root;
+          this.root.parent = null;
           this.root.id = ++this.id_count;
           return;
       }
@@ -30,15 +34,17 @@
       while(start){
 
           if(val >= start.data){
+
               if(start.right == null){
                   start.right = new Node(val);
                   start.right.id = ++this.id_count;
                   start.right.parent = start;
                   root = start.right;
-                  tree.root = this.balance(root);
+                  this.root = this.balance(root);
                   return;
               }
               start = start.right;
+
           }
   
           if(val <= start.data){
@@ -48,7 +54,7 @@
                   start.left.id = ++this.id_count;
                   start.left.parent = start;
                   root = start.left;
-                  tree.root = this.balance(root);
+                  this.root = this.balance(root);
                   return;
               }
   
@@ -81,17 +87,17 @@
   
   BinaryTree.prototype.deleteRecursive = function (val, root, parent) {
     if (!root) {
-        // console.log("RETURN");
+        // console_log("RETURN");
       return;
     }
   
     if (val > root.data) {
-        // console.log("RIGHT SUBTREE");
+        // console_log("RIGHT SUBTREE");
       this.deleteRecursive(val, root.right, root);
     }
   
     if (val < root.data) {
-        // console.log("RIGHT SUBTREE");
+        // console_log("RIGHT SUBTREE");
       this.deleteRecursive(val, root.left, root);
     } 
 
@@ -135,7 +141,7 @@
         
       //Handle left subtree case
       if (literal(root) === literal(parent.left)) {
-          // console.log("LEFT SUBTREE");
+          // console_log("LEFT SUBTREE");
         //Handle empty leaf node
         if (!root.left && !root.right) {
           parent.left = null;
@@ -177,7 +183,7 @@
       if (literal(root) === literal(parent.right)) {
         //Handle empty leaf node
 
-        // console.log("RIGHT SUBTREE");
+        // console_log("RIGHT SUBTREE");
         if (!root.left && !root.right) {
           parent.right = null;
         }
@@ -212,7 +218,7 @@
           temp.parent = parent;
         }
       }
-      // console.log("END");
+      // console_log("END");
     }
   };
   
@@ -229,7 +235,7 @@
       if(!node)
           return;
       this.inOrder(node.left);
-      // console.log(node.data);
+      console.log(node.data);
       this.inOrder(node.right);
   }
 
@@ -237,7 +243,7 @@
     if(!node)
       return;
 
-    // console.log(node.data);
+    // console_log(node.data);
     this.preOrder(node.left);
     this.preOrder(node.right);
   }
@@ -248,20 +254,20 @@
 
     this.postOrder(node.left);
     this.postOrder(node.right);
-    // console.log(node.data);
+    // console_log(node.data);
   }
 
   BinaryTree.prototype.rightRotate = function(node){
     let temp = node.parent;
     temp.left = node.right;
     node.right = temp;
-    temp.parent.right = node;
-    node.parent = temp.parent;
     temp.parent = node;
+    node.parent = temp.parent;
+    // node.parent = node;
 
     if(node.parent === this.root){
-      node.parent = node;
-      tree.root = node;
+      node.parent = null;
+      this.root = node;
     }
 
     return node;
@@ -272,12 +278,14 @@
     let temp = node.parent;
     temp.right = node.left;
     node.left = temp;
+    node.parent = temp.parent;
     temp.parent = node;
-    node.parent = node;
+    temp.right = null;
+    // node.parent = node;
 
     if(this.root === node.parent){
-      node.parent = node;
-      tree.root = node;
+      node.parent = null;
+      this.root = node;
     }
 
     return node;
@@ -285,16 +293,18 @@
   }
 
   BinaryTree.prototype.rightLeftRotate = function(ancestor){
+    console.log("RL");
     let nodeParent = ancestor.right;
     let node = ancestor.right.left;
-    // console.log(ancestor.right);
+    // console_log(ancestor.right);
     ancestor.right = this.rightRotate(ancestor.right.left);
     ancestor = this.leftRotate(ancestor.right);
-    console.log(ancestor);
+    // console_log(ancestor);
     return ancestor;
   }
 
   BinaryTree.prototype.leftRightRotate = function(ancestor){
+    console.log("LR");
     let nodeParent = ancestor.left;
     let node = ancestor.left.right;
     ancestor.left = this.rightRotate(ancestor.left.right);
@@ -310,7 +320,7 @@
 
   BinaryTree.prototype.balance = function(node){
 
-    // console.log(node.parent.parent);
+    // console_log(node.parent.parent);
 
     if(node.parent && node.parent.parent){
 
@@ -318,40 +328,46 @@
 
       const balance_factor = this.height(ancestor.left) - this.height(ancestor.right);
 
-      console.log("BALANCE_FACTOR: "+balance_factor);
-      // console.log(ancestor);
+      // console.log("BALANCE_FACTOR: "+balance_factor);
+      // console_log(ancestor);
 
-      if(balance_factor === -1 || balance_factor ===0 || balance_factor ===1){
+      if(balance_factor === -1 || balance_factor === 0 || balance_factor === 1){
 
         if(this.root === node)
           return node;
+
+          console.log(this.root);  
 
         return this.balance(ancestor);
       }else{
         
         //LL-Case
         if(ancestor.left && ancestor.left.left && node === ancestor.left.left){
-          node.parent.parent = this.rightRotate(ancestor);
-          return this.balance(ancestor);
+          console.log("LL");
+          node.parent.parent = this.rightRotate(ancestor.left);
+          console.log(node.parent.parent);
+          return this.balance(node.parent.parent);
         }
 
         //LR-Case
         if(ancestor.left && ancestor.left.right && node === ancestor.left.right){
           node.parent.parent = this.leftRightRotate(ancestor);
-          return this.balance(ancestor);
+          // console_log(node.parent.parent)
+          return this.balance(node.parent.parent);
         }
 
         //RR-Case
         if(ancestor.right && ancestor.right.right && node === ancestor.right.right){
-          node.parent.parent = this.leftRotate(ancestor);
-          return this.balance(ancestor);
+          console.log("RR");
+          node.parent.parent = this.leftRotate(ancestor.right);
+          return this.balance(node.parent.parent);
         }
 
         //RL-Case
         if(ancestor.right && ancestor.right.left && node === ancestor.right.left){
-          // console.log(ancestor.right.left);
+          // console_log(ancestor.right.left);
           node.parent.parent = this.rightLeftRotate(ancestor);
-          return this.balance(ancestor);
+          return this.balance(node.parent.parent);
         }
 
       }
@@ -372,13 +388,13 @@
   
   let tree = new BinaryTree();
   tree.insert(99);
-  tree.insert(100);
-  tree.insert(31);
+  tree.insert(98);
+  tree.insert(97);
   tree.insert(90);
-  tree.insert(40);
+  // tree.insert(40);
   tree.insert(34);
   tree.insert(458);
-  tree.insert(12);
+  // tree.insert(12);
   // tree.insert(40);
   // tree.insert(46);
   // tree.insert(50);
@@ -386,4 +402,4 @@
 
   tree.inOrder(tree.root);
 
-  console.log(tree.height(tree.root));
+  console_log(tree.root);
