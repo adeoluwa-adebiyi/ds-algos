@@ -261,14 +261,19 @@ function console_log(obj){
     let temp = node.parent;
     temp.left = node.right;
     node.right = temp;
-    temp.parent = node;
     node.parent = temp.parent;
-    // node.parent = node;
+    temp.parent = node;
 
-    if(node.parent === this.root){
-      node.parent = null;
+    if(!node.parent){
+      console.log("ROOT NODE DETECTED");
+      // node.parent = null;
       this.root = node;
+      // this.root.parent = null;
     }
+
+    tree.inOrder(node);
+
+    console.log("----->")
 
     return node;
 
@@ -280,13 +285,16 @@ function console_log(obj){
     node.left = temp;
     node.parent = temp.parent;
     temp.parent = node;
-    temp.right = null;
-    // node.parent = node;
 
-    if(this.root === node.parent){
-      node.parent = null;
+    if(!node.parent){
+      console.log("ROOT NODE DETECTED");
+      // node.parent = null;
       this.root = node;
+      // this.root.parent = null;
     }
+    tree.inOrder(node);
+
+    console.log("----->")
 
     return node;
 
@@ -294,8 +302,6 @@ function console_log(obj){
 
   BinaryTree.prototype.rightLeftRotate = function(ancestor){
     console.log("RL");
-    let nodeParent = ancestor.right;
-    let node = ancestor.right.left;
     // console_log(ancestor.right);
     ancestor.right = this.rightRotate(ancestor.right.left);
     ancestor = this.leftRotate(ancestor.right);
@@ -305,10 +311,11 @@ function console_log(obj){
 
   BinaryTree.prototype.leftRightRotate = function(ancestor){
     console.log("LR");
-    let nodeParent = ancestor.left;
-    let node = ancestor.left.right;
-    ancestor.left = this.rightRotate(ancestor.left.right);
-    ancestor = this.leftRotate(ancestor.left);
+    tree.inOrder(ancestor);
+    console.log("---->");
+    ancestor.left = this.leftRotate(ancestor.left.right);
+    console.log("L_rotate");
+    ancestor = this.rightRotate(ancestor.left);
     return ancestor;
   }
 
@@ -328,37 +335,32 @@ function console_log(obj){
 
       const balance_factor = this.height(ancestor.left) - this.height(ancestor.right);
 
-      // console.log("BALANCE_FACTOR: "+balance_factor);
-      // console_log(ancestor);
-
       if(balance_factor === -1 || balance_factor === 0 || balance_factor === 1){
 
         if(this.root === node)
           return node;
-
-          console.log(this.root);  
 
         return this.balance(ancestor);
       }else{
         
         //LL-Case
         if(ancestor.left && ancestor.left.left && node === ancestor.left.left){
-          console.log("LL");
           node.parent.parent = this.rightRotate(ancestor.left);
-          console.log(node.parent.parent);
           return this.balance(node.parent.parent);
         }
 
         //LR-Case
         if(ancestor.left && ancestor.left.right && node === ancestor.left.right){
           node.parent.parent = this.leftRightRotate(ancestor);
-          // console_log(node.parent.parent)
+
+          if(!node.parent)
+            return node;
+
           return this.balance(node.parent.parent);
         }
 
         //RR-Case
         if(ancestor.right && ancestor.right.right && node === ancestor.right.right){
-          console.log("RR");
           node.parent.parent = this.leftRotate(ancestor.right);
           return this.balance(node.parent.parent);
         }
@@ -367,6 +369,9 @@ function console_log(obj){
         if(ancestor.right && ancestor.right.left && node === ancestor.right.left){
           // console_log(ancestor.right.left);
           node.parent.parent = this.rightLeftRotate(ancestor);
+          if(!node.parent)
+           return node;
+
           return this.balance(node.parent.parent);
         }
 
@@ -374,12 +379,12 @@ function console_log(obj){
 
     }
 
-    BinaryTree.prototype.maxHeight = function (node){
-      return Math.max(this.height(node.left), this.height(node.right))
-    }
-
     return node;
 
+  }
+
+  BinaryTree.prototype.maxHeight = function (node){
+    return Math.max(this.height(node.left), this.height(node.right))
   }
 
   function literal(obj){
@@ -388,18 +393,21 @@ function console_log(obj){
   
   let tree = new BinaryTree();
   tree.insert(99);
-  tree.insert(98);
-  tree.insert(97);
-  tree.insert(90);
-  // tree.insert(40);
+  tree.insert(100);
+  tree.insert(102);
+  tree.insert(103);
+  tree.insert(40);
   tree.insert(34);
-  tree.insert(458);
   // tree.insert(12);
   // tree.insert(40);
   // tree.insert(46);
   // tree.insert(50);
-  // tree.insert(70);
+  tree.insert(70);
+  // console.log(tree.height(tree.root));
+
 
   tree.inOrder(tree.root);
 
-  console_log(tree.root);
+  console.log(tree.root)
+
+  // console_log(tree.root);
