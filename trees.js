@@ -359,10 +359,13 @@ function console_log(obj){
     if(balance_factor === -1 || balance_factor === 0 || balance_factor === 1){
       return this.balance(node.parent);
     }
-    
+
     else{
+
       let root = null;
+
       if(node.parent && node.parent.parent){
+
         if(node.parent.left === node && node.parent.parent.left === node.parent){
           root = node.parent.parent.left = this.leftRotate(node);
         }
@@ -378,14 +381,13 @@ function console_log(obj){
         if(node.parent.right === node && node.parent.parent.left === node){
           root = node.parent.parent.right = this.leftRightRotate(node);
         }
-
+        console.log(root);
         return this.balance(root);
+
       }else{
-        return node.parent;
+        return node;
       }
     }
-
-
   }
 
   BinaryTree.prototype.maxHeight = function (node){
@@ -403,11 +405,11 @@ function console_log(obj){
   tree.insert(103);
   tree.insert(40);
   tree.insert(34);
-  // tree.insert(12);
-  // tree.insert(40);
-  // tree.insert(46);
-  // tree.insert(50);
-  tree.insert(70);
+  tree.insert(12);
+  tree.insert(40);
+  tree.insert(46);
+  tree.insert(50);
+  // tree.insert(70);
   // console.log(tree.height(tree.root));
 
 
