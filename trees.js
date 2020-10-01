@@ -319,6 +319,30 @@ function console_log(obj){
     return ancestor;
   }
 
+  BinaryTree.prototype.rotationRR = function(node) {
+    let tmp = node.right;
+    node.right = tmp.left;
+    tmp.left = node;
+    return tmp;
+  }
+
+  BinaryTree.prototype.rotationLL = function(node){
+    let tmp = node.left;
+    node.left = tmp.right;
+    tmp.right = node;
+    return tmp;
+  }
+
+  BinaryTree.prototype.rotationLR = function (node) {
+    node.left = rotationRR(node.left);
+    return rotationLL(node);
+  }
+
+  BinaryTree.prototype.rotationRL = function(node) {
+    node.right = rotationLL(node.right);
+    return rotationRR(node);
+  }
+
   BinaryTree.prototype.height = function(node){
     if(!node)
       return 0;
@@ -327,59 +351,40 @@ function console_log(obj){
 
   BinaryTree.prototype.balance = function(node){
 
-    // console_log(node.parent.parent);
+    if(!node.parent)
+      return node;
 
-    if(node.parent && node.parent.parent){
+    let balance_factor = this.height(node.left) - this.height(node.right);
+    
+    if(balance_factor === -1 || balance_factor === 0 || balance_factor === 1){
+      return this.balance(node.parent);
+    }
+    
+    else{
+      let root = null;
+      if(node.parent && node.parent.parent){
+        if(node.parent.left === node && node.parent.parent.left === node.parent){
+          root = node.parent.parent.left = this.leftRotate(node);
+        }
 
-      let ancestor = node.parent.parent;
+        if(node.parent.right === node && node.parent.parent.right === node.parent){
+          root = node.parent.parent.right = this.rightRotate(node);
+        }
 
-      const balance_factor = this.height(ancestor.left) - this.height(ancestor.right);
+        if(node.parent.left === node && node.parent.parent.right === node){
+          root = node.parent.parent.left = this.rightLeftRotate(node);
+        }
 
-      if(balance_factor === -1 || balance_factor === 0 || balance_factor === 1){
+        if(node.parent.right === node && node.parent.parent.left === node){
+          root = node.parent.parent.right = this.leftRightRotate(node);
+        }
 
-        if(this.root === node)
-          return node;
-
-        return this.balance(ancestor);
+        return this.balance(root);
       }else{
-        
-        //LL-Case
-        if(ancestor.left && ancestor.left.left && node === ancestor.left.left){
-          node.parent.parent = this.rightRotate(ancestor.left);
-          return this.balance(node.parent.parent);
-        }
-
-        //LR-Case
-        if(ancestor.left && ancestor.left.right && node === ancestor.left.right){
-          node.parent.parent = this.leftRightRotate(ancestor);
-
-          if(!node.parent)
-            return node;
-
-          return this.balance(node.parent.parent);
-        }
-
-        //RR-Case
-        if(ancestor.right && ancestor.right.right && node === ancestor.right.right){
-          node.parent.parent = this.leftRotate(ancestor.right);
-          return this.balance(node.parent.parent);
-        }
-
-        //RL-Case
-        if(ancestor.right && ancestor.right.left && node === ancestor.right.left){
-          // console_log(ancestor.right.left);
-          node.parent.parent = this.rightLeftRotate(ancestor);
-          if(!node.parent)
-           return node;
-
-          return this.balance(node.parent.parent);
-        }
-
+        return node.parent;
       }
-
     }
 
-    return node;
 
   }
 
