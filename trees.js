@@ -355,37 +355,46 @@ function console_log(obj){
       return node;
 
     let balance_factor = this.height(node.left) - this.height(node.right);
+
+    console.log("BALANCE: "+balance_factor);
+
     
     if(balance_factor === -1 || balance_factor === 0 || balance_factor === 1){
+      console.log("SKIP");
       return this.balance(node.parent);
     }
-
     else{
 
-      let root = null;
+      let v = null;
 
       if(node.parent && node.parent.parent){
 
+        console.log("SECTION");
+
         if(node.parent.left === node && node.parent.parent.left === node.parent){
-          root = node.parent.parent.left = this.leftRotate(node);
+          console.log("LL");
+          v = node.parent.parent.left = this.leftRotate(node);
         }
 
         if(node.parent.right === node && node.parent.parent.right === node.parent){
-          root = node.parent.parent.right = this.rightRotate(node);
+          console.log("RR");
+          v = node.parent.parent.right = this.rightRotate(node);
         }
 
-        if(node.parent.left === node && node.parent.parent.right === node){
-          root = node.parent.parent.left = this.rightLeftRotate(node);
+        if(node.parent.left === node && node.parent.parent.right === node.parent){
+          console.log("RL");
+          v = node.parent.parent.left = this.rightLeftRotate(node);
         }
 
-        if(node.parent.right === node && node.parent.parent.left === node){
-          root = node.parent.parent.right = this.leftRightRotate(node);
+        if(node.parent.right === node && node.parent.parent.left === node.parent){
+          console.log("LR");
+          v = node.parent.parent.right = this.leftRightRotate(node);
         }
-        console.log(root);
-        return this.balance(root);
+        console.log(v);
+        return this.balance(v);
 
       }else{
-        return node;
+        return this.balance(node.parent);
       }
     }
   }
@@ -403,18 +412,18 @@ function console_log(obj){
   tree.insert(100);
   tree.insert(102);
   tree.insert(103);
-  tree.insert(40);
-  tree.insert(34);
-  tree.insert(12);
-  tree.insert(40);
-  tree.insert(46);
-  tree.insert(50);
+  // tree.insert(400);
+  // tree.insert(900);
+  // tree.insert(12);
+  // tree.insert(40);
+  // tree.insert(46);
+  // tree.insert(50);
   // tree.insert(70);
   // console.log(tree.height(tree.root));
 
 
-  tree.inOrder(tree.root);
+  // tree.inOrder(tree.root);
 
-  console.log(tree.root)
+  // console.log(tree.root)
 
   // console_log(tree.root);
