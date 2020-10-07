@@ -303,7 +303,7 @@
 
   BinaryTree.prototype.balance = function(node){
 
-    if(node.parent){
+    // if(node.parent){
 
       const balance_factor = this.balanceFactor(node);
 
@@ -339,14 +339,17 @@
 
         }
 
+        if(!node.parent)
+          return node;
+
         return this.balance(node.parent);
 
       // }
 
-    }
+    // }
 
     console.log("END");
-    return node;
+    // return node;
 
   }
 
