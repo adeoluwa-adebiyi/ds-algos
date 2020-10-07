@@ -212,7 +212,6 @@
           temp.parent = parent;
         }
       }
-      // console.log("END");
     }
   };
   
@@ -236,6 +235,8 @@
   BinaryTree.prototype.preOrder = function(node){
     if(!node)
       return;
+
+    console.log(node.data);
     this.preOrder(node.left);
     this.preOrder(node.right);
   }
@@ -245,6 +246,7 @@
       return;
     this.postOrder(node.left);
     this.postOrder(node.right);
+    console.log(node.data);
   }
 
   BinaryTree.prototype.rightRotate = function(node){
@@ -257,6 +259,7 @@
       node.parent.right = temp;
     }
     node.left = temp.right;
+    temp.right = node;
     temp.parent = node.parent;
     node.parent = temp;
     return temp;
@@ -272,6 +275,7 @@
       node.parent.right = temp;
     }
     node.right = temp.left;
+    temp.left = node;
     temp.parent = node.parent;
     node.parent = temp;
     return temp;
@@ -303,7 +307,7 @@
 
   BinaryTree.prototype.balance = function(node){
 
-    // if(node.parent){
+    if(node){
 
       const balance_factor = this.balanceFactor(node);
 
@@ -339,17 +343,18 @@
 
         }
 
-        if(!node.parent)
+        if(node.parent == null){
           return node;
+        }
 
         return this.balance(node.parent);
 
       // }
 
-    // }
+    }
 
     console.log("END");
-    // return node;
+    return node;
 
   }
 
@@ -365,19 +370,20 @@
 
   tree.insert(90);
   tree.insert(91);
-  tree.insert(92);
   tree.insert(100);
-  // tree.insert(90);
-  // tree.insert(40);
-  // tree.insert(34);
-  // tree.insert(458);
+  tree.insert(105);
+  tree.insert(40);
+  tree.insert(34);
+  tree.insert(458);
+  tree.insert(12);
+  tree.insert(40);
+  tree.insert(46);
+  tree.insert(50);
+  tree.insert(70);
 
-  // tree.insert(12);
-  // tree.insert(40);
-  // tree.insert(46);
-  // tree.insert(50);
-  // tree.insert(70);
+  // console.log(tree.root)
 
+  tree.delete(90);
   tree.inOrder(tree.root);
 
   // console.log(tree.height(tree.root));
