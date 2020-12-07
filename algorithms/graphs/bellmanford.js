@@ -26,20 +26,26 @@ const nodesMap = {
     4: "E"
 }
 
-const bellmanFord = (edges, table, v, end) => {
+const bellmanFord = (edges, table,verts, vstart, end) => {
 
 
-    distances = {
-        0:Infinity,
-        1:Infinity,
-        2:Infinity,
-        3:Infinity,
-        4:Infinity
-    };
+    distances = {};
+
+    for(let vert of verts){
+        distances[vert] = Infinity;
+    }
 
     prevs = {}
 
-    distances[v] = 0;
+    distances[vstart] = 0;
+
+    const getPath = (endVertex,list=[])=>{
+        if(!endVertex)
+            return list;
+        const prev = prevs[endVertex];
+        list.push(nodesMap[prev]);
+        return getPath(prev,list);
+    }
 
     const relax = (detectCycle=false) => {
         for(let edge of edges){
@@ -58,14 +64,6 @@ const bellmanFord = (edges, table, v, end) => {
         }
     }
 
-    const getPath = (endVertex,list=[])=>{
-        if(!endVertex)
-            return list;
-        const prev = prevs[endVertex];
-        list.push(nodesMap[prev]);
-        return getPath(prev,list);
-    }
-
     for(let vertex=0; vertex < _table.length-1; vertex++){
         relax();
     }
@@ -82,7 +80,7 @@ const bellmanFord = (edges, table, v, end) => {
 
 
 const main = ()=>{
-    bellmanFord(edges, _table,0,3);
+    bellmanFord(edges, _table, Object.keys(nodesMap),0,3);
 }
 
 main();
