@@ -35,7 +35,7 @@ const bellmanFord = (edges, table,verts, vstart, end) => {
         distances[vert] = Infinity;
     }
 
-    prevs = {}
+    prevs = {};
 
     distances[vstart] = 0;
 
