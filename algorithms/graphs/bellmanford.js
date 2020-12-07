@@ -1,111 +1,88 @@
-const graphModule = require("./graph");
 
-const Graph = graphModule.Graph;
+const edges = [
+    [0,1],
+    [0,2],
+    [1,2],
+    [1,3],
+    [1,4],
+    [3,1],
+    [3,2],
+    [4,3]
+]
 
+const _table = [
+    [Infinity, -1, 4, Infinity, Infinity],
+    [Infinity, Infinity, 3, 2, 2],
+    [Infinity, Infinity, Infinity, Infinity, Infinity],
+    [Infinity, 1, 5, Infinity, Infinity],
+    [Infinity, Infinity, Infinity, -3, Infinity]
+]
 
-const prev = (end, start, prevStore,list=[])=>{
-    if(end === start){
-        list.push(end);
-        return list.reverse();
-    }
-    list.push(end);
-    return prev(prevStore[end],start,prevStore,list);;
+const nodesMap = {
+    0: "A",
+    1: "B",
+    2: "C",
+    3: "D",
+    4: "E"
 }
 
-const bellmanFordAlg = (graph, start,end) =>{
-
-    const vertices = (g=graph) => {
-        return Object.keys(g.rep);
-    }
-
-    const distances = {};
-
-    const previous = {};
+const bellmanFord = (edges, table, v, end) => {
 
 
-    for(let nodeTuple of Object.keys(graph.rep)){
-        const [node, nWeight] = nodeTuple;
-        distances[node] = Infinity;
-        previous[node] = null;
-    }
+    distances = {
+        0:Infinity,
+        1:Infinity,
+        2:Infinity,
+        3:Infinity,
+        4:Infinity
+    };
 
-    distances[start] = 0;
+    prevs = {}
 
+    distances[v] = 0;
 
-    for(let i = 0; i < vertices().length-1; i++){
+    const relax = (detectCycle=false) => {
+        for(let edge of edges){
 
-        for(let vert of vertices()){
-
-            for(let nodeTuple of graph.neighbours(vert)){
-                const [node, weight] = nodeTuple;
-                const newDistance = distances[vert] + weight;
-
-                if(newDistance < distances[node]){
-                    distances[node] = newDistance;
-                    previous[node] = vert;
+            const start = edge[0];
+            const dest = edge[1];
+            const newDistance = distances[start] + table[start][dest];
+            if(newDistance < distances[dest]){
+                if(detectCycle){
+                    throw Error("Graph has negative cycles. Cannot calculate Shortest Path");
                 }
-               
-
+                distances[dest] = newDistance;
+                prevs[dest] = start;
             }
+
         }
-
-        console.log("DISTANCES:");
-        console.log(distances);
-        console.log("PREVIOUS:");
-        console.log(previous);
-
     }
 
-    // console.log("DISTANCES:");
-    // console.log(distances);
-    // console.log("PREVIOUS:");
-    // console.log(previous);
-
-
-    for(let vert of vertices()){
-
-            for(let nodeTuple of graph.neighbours(vert)){
-                const [node, weight] = nodeTuple;
-                const newDistance = distances[vert] + weight;
-                
-                if(newDistance < distances[node]){
-                    throw Error("Graph contains negative cycles");
-                }
-            }
+    const getPath = (endVertex,list=[])=>{
+        if(!endVertex)
+            return list;
+        const prev = prevs[endVertex];
+        list.push(nodesMap[prev]);
+        return getPath(prev,list);
     }
 
-    return prev(end,start, previous, []);
-    
+    for(let vertex=0; vertex < _table.length-1; vertex++){
+        relax();
+    }
+
+    relax(true);
+
+    const path = getPath(end).reverse();
+
+    console.log(`PATH: ${path}`);
+
+    return path;
+
 }
-
 
 
 const main = ()=>{
-
-const graphRep = {
-    "M": [ 
-        ["N",1]
-     ],
-    "N": [
-        ["O",3], ["Q",2], ["P",2]
-    ],
-    "O": [
-        ["P",2], ["N",3], ["Q",-3]
-    ],
-    "Q": [
-        ["P",3],["N",2], ["0",-3]
-    ],
-    "P":[
-        ["R",2], ["O",2], ["Q",3]
-    ],
-    "R":[
-        ["P",2]
-    ]
-    
-    };
-
-    const graph = new Graph(graphRep);
-    console.log(bellmanFordAlg(graph,"M", "R"));
+    bellmanFord(edges, _table,0,3);
 }
 
 main();
